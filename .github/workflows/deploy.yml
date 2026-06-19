@@ -8,6 +8,12 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
+    # This tells GitHub Actions to run all commands inside the client folder
+    defaults:
+      run:
+        working-directory: ./client
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,6 +27,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'pnpm'
+          cache-dependency-path: ./client/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
@@ -32,4 +40,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/spa
+          # Points to the dist folder inside the client directory
+          publish_dir: ./client/dist
