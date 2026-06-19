@@ -1,44 +1,35 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
     branches:
       - main
+
 permissions:
   contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
-    # This tells GitHub Actions to run all commands inside the client folder
-    defaults:
-      run:
-        working-directory: ./client
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: 'pnpm'
-          cache-dependency-path: ./client/pnpm-lock.yaml
+          node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Build project
-        run: pnpm run build
+        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Points to the dist folder inside the client directory
-          publish_dir: ./client/dist
+          publish_dir: ./dist
